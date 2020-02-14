@@ -14,7 +14,8 @@
 
 using namespace std;
 
-extern "C" {
+extern "C" 
+{
     #include "extApi.h"
 }
 
@@ -22,17 +23,20 @@ int handles[6],all_ok=1;
 simxInt handle, error;
 
 
-void GetHandles(int clientID){
+void GetHandles(int clientID)
+{
 	simxChar objectName[100];
 	char str[10];
-    for (int i=0; i < 6; i++) {
+    for (int i=0; i < 6; i++) 
+    {
         strcpy(objectName, "joint");
         sprintf(str, "%d", i+1);
         strcat(objectName,str);
         error=simxGetObjectHandle(clientID, objectName, &handle, simx_opmode_oneshot_wait);
         if (error == simx_return_ok)
             handles[i]=handle;
-        else {
+        else 
+        {
             printf("Error in Object Handle - joint number %d\n", i);
             all_ok=0;
         }
@@ -68,7 +72,8 @@ int SetJointPos(int clientID,  float *q)
         }
     }
     */
-    if (all_ok) {
+    if (all_ok)
+    {
         //Pause the communication thread
         //simxPauseCommunication(clientID, 1);
         // Send the joint target positions
@@ -90,7 +95,7 @@ int main(int argc,char* argv[])
     int commThreadCycleInMs=5;  // indicate how often data packets are sent back and forth - a default value of 5 is recommended
     int err;
 
-    // Connection to the server
+    // Connection to the simulator server
     int clientID=simxStart((simxChar*)"127.0.0.1",portNb,true,true,timeOutInMs,commThreadCycleInMs);
 
 //    float q[7];
@@ -99,7 +104,10 @@ int main(int argc,char* argv[])
     float q[6];
     float qr[6];
     GetHandles(clientID);
-    for (int i=0; i < 6;i++)q[i]=0.0;
+    
+    for (int i=0; i < 6;i++)
+    	q[i]=0.0; // fill q with zeros
+
 
     if (clientID!=-1)
     {
@@ -110,14 +118,18 @@ int main(int argc,char* argv[])
        float t=0.0;
        float tfinal=5;
        float dt=0.01;
+       
+       // here we should open a server to receive the data from the Comunicator's client side
        float q0m=0.5;
        float q1m=0.5;
        float q2m=0.6;
+       
        float w=2*M_PI/2.5;
        
        int offsetTime=simxGetLastCmdTime(clientID)/1000;
 
-       while (t < tfinal) {
+       while (t < tfinal)
+       {
            printf("Current time: %6.4f\n", t);
            //GetJointPos(clientId,qr);
            q[0]=q0m*sin(w*t);
