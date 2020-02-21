@@ -56,7 +56,7 @@ int main (int argc, char *arg[])
 
 		resultr=recvfrom( controllerClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr );
 
-		printf("\n Received from Controller Client : \n  label=%lf position=%lf control=%lf rr=%d rs=%d ",message.label,message.position, message.control, resultr, results );
+		printf("\n Received from Controller Client : \n  label=%lf position=%lf control=%lf rr=%d rs=%d ",message.label,message.position[0], message.control[0], resultr, results );
 
 		// delay simulado
 

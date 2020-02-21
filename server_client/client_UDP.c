@@ -44,7 +44,7 @@ int main (int argc, char *arg[])
 		results=sendto(communicatorServer,&message,sizeof(message),0,(struct sockaddr*)&sockAddr,sizeof(sockAddr));
 		//resultr=recvfrom(communicatorServer,&message,sizeof(message), 0,(struct sockaddr*)&sockAddr,&addr);
 
-		printf("\n client : \n  label=%lf position=%lf control=%lf rr=%d rs=%d ",message.label,message.position, message.control, resultr, results );
+		printf("\n client : \n  label=%lf position=%lf control=%lf rr=%d rs=%d ",message.label,message.position[0], message.control[0], resultr, results );
 
 	} while(message.label<100.0);
 
