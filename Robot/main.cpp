@@ -11,6 +11,7 @@
 #include <math.h>
 #include <string.h>
 #include <unistd.h>
+#include "../utils.h"//muda isso
 
 using namespace std;
 
@@ -90,13 +91,40 @@ int SetJointPos(int clientID,  float *q)
 
 int main(int argc,char* argv[])
 {
-    int portNb=5555;            // the port number where to connect
+    int portVREP=5555;            // the port number where to connect
     int timeOutInMs=5000;       // connection time-out in milliseconds (for the first connection)
     int commThreadCycleInMs=5;  // indicate how often data packets are sent back and forth - a default value of 5 is recommended
     int err;
 
-    // Connection to the simulator server
-    int clientID=simxStart((simxChar*)"127.0.0.1",portNb,true,true,timeOutInMs,commThreadCycleInMs);
+
+    // Server socket variables
+    int portCommunicator=4545;
+    struct mesg message;
+	int result, nsend;
+	struct sockaddr_in sockServer;
+	int communicatorClient, nConnect;
+    unsigned int longaddr;
+
+
+    // Connection to the VREP_Server
+    int clientID=simxStart((simxChar*)"162.38.40.133",portVREP,true,true,timeOutInMs,commThreadCycleInMs);
+
+    // Server creation
+	communicatorClient=socket(PF_INET,SOCK_DGRAM,IPPROTO_UDP);
+	sockServer.sin_family=PF_INET;
+	sockServer.sin_port=htons(portCommunicator); 
+	sockServer.sin_addr.s_addr=0;
+    longaddr=sizeof(sockServer);
+
+    err=bind( communicatorClient,( struct sockaddr* )&sockServer, longaddr );
+    if( err==ERROR ) 
+    {
+        printf( "\n erreur de bind du communicatorClient UDP!! \n" );
+    }
+		
+	fcntl(communicatorClient,F_SETFL,fcntl(communicatorClient,F_GETFL) | O_NONBLOCK); 
+    // end server creation
+    
 
 //    float q[7];
 //    for (int i=0; i < 6; i++) q[i]=0.0;
@@ -116,10 +144,13 @@ int main(int argc,char* argv[])
        simxStartSimulation(clientID, simx_opmode_oneshot);
 
        float t=0.0;
-       float tfinal=5;
-       float dt=0.01;
+       float tfinal=20;
+       float dt=0.05;
        
-       // here we should open a server to receive the data from the Comunicator's client side
+       // here we should open a server to receive the data from the Communicator's client side
+    //    int resultr=recvfrom( communicatorClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr );
+    //     printf("\n Received from Controller Client : \n  label=%lf position=%lf control=%lf rr=%d",message.label,message.position, message.control, resultr );
+
        float q0m=0.5;
        float q1m=0.5;
        float q2m=0.6;
@@ -130,6 +161,12 @@ int main(int argc,char* argv[])
 
        while (t < tfinal)
        {
+           
+            // receiving the data from communicator client
+            int resultr=recvfrom( communicatorClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr );
+            printf("\n Received from Controller Client : \n  label=%lf position=%lf control=%lf rr=%d",message.label,message.position, message.control, resultr );
+
+
            printf("Current time: %6.4f\n", t);
            //GetJointPos(clientId,qr);
            q[0]=q0m*sin(w*t);
