@@ -15,7 +15,7 @@
 
 struct mesg
 {
-	double label;
-	double position[1];
-	double control[1];
+	float label;
+	float position[6];
+	float control[1];
 };

@@ -159,23 +159,34 @@ int main(int argc,char* argv[])
        
        int offsetTime=simxGetLastCmdTime(clientID)/1000;
 
+
+
        while (t < tfinal)
        {
            
             // receiving the data from communicator client
             int resultr=recvfrom( communicatorClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr );
-            printf("\n Received from Controller Client : \n  label=%lf position=%lf control=%lf rr=%d",message.label,message.position, message.control, resultr );
+            printf("\n Received from Controller Client : \n  label=%f position=%f control=%f rr=%d",message.label,message.position[5], message.control, resultr );
 
 
            printf("Current time: %6.4f\n", t);
            //GetJointPos(clientId,qr);
-           q[0]=q0m*sin(w*t);
+           //q[0] = 0;//q0m*sin(w*t);  ##### 
            //if (t>2) q[0]=0.4;
            //else
            //q[0]=0;
            
            //q[1]=-q1m*sin(2*w*t);
            //q[2]=q2m*sin(4*w*t);
+
+            if( resultr != 0 )
+            {
+                //q = message.position;
+                memcpy( q, message.position, sizeof( q ) );
+            }
+
+
+
            SetJointPos(clientID, q);
            //simxSynchronousTrigger(clientID);
            t+=dt;
