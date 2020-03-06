@@ -10,25 +10,25 @@ int main (int argc, char *arg[])
 	struct mesg message;
 	long int Te;
 
-	struct sockaddr_in sockAddr, sock;
-	int communicatorServer, client, err, nConnect, longaddr , results, resultr;
-	
+	struct sockaddr_in sockClient, sock;
+	int communicatorServer, client, err, nConnect;
+	unsigned int longaddr;
 
 	communicatorServer=socket(PF_INET,SOCK_DGRAM,IPPROTO_UDP);
-	sockAddr.sin_family=PF_INET;
-	sockAddr.sin_port=htons(2000); 
+	sockClient.sin_family=PF_INET;
+	sockClient.sin_port=htons(2000); 
 
 	if( argc < 2 )
 	{
 		printf("Working with standard address %s: ", STD_ADDR);
-		sockAddr.sin_addr.s_addr=inet_addr(STD_ADDR);
+		sockClient.sin_addr.s_addr=inet_addr(STD_ADDR);
 	}
 	else
 	{
-		sockAddr.sin_addr.s_addr=inet_addr(arg[1]);
+		sockClient.sin_addr.s_addr=inet_addr(arg[1]);
 	}
 
-	fcntl(communicatorServer,F_SETFL,fcntl(communicatorServer,F_GETFL) | O_NONBLOCK); 
+	//fcntl(communicatorServer,F_SETFL,fcntl(communicatorServer,F_GETFL) | O_NONBLOCK); 
 
 	
 	
@@ -38,6 +38,9 @@ int main (int argc, char *arg[])
 
 	int userInput, exitController;
 	exitController = 0;
+	int rcvReturn = ERROR;
+	int sendReturn = ERROR;
+
 	do
 	{
 		printf("Select robot position:\n\t0 - Initial Position\n\t1 - Position 1\n");
@@ -69,11 +72,14 @@ int main (int argc, char *arg[])
 		// usleep(Te);
 
 		message.label++;
-		results=sendto(communicatorServer,&message,sizeof(message),0,(struct sockaddr*)&sockAddr,sizeof(sockAddr));
-		//resultr=recvfrom(communicatorServer,&message,sizeof(message), 0,(struct sockaddr*)&sockAddr,&addr);
+		sendReturn=sendto(communicatorServer,&message,sizeof(message),0,(struct sockaddr*)&sockClient,sizeof(sockClient));
+		//resultr=recvfrom(communicatorServer,&message,sizeof(message), 0,(struct sockaddr*)&sockClient,&addr);
 
-		printf("\n client : \n  label=%f position=%f control=%f rr=%d rs=%d ",message.label,message.position[0], message.control[0], resultr, results );
+		// Loopback recevie from COmunicator
+		rcvReturn=recvfrom( communicatorServer,&message,sizeof(message), 0,(struct sockaddr*)&sockClient,&longaddr );
+		printf("\n client : \n  label=%f position=%f control=%f rr=%d rs=%d ",message.label,message.position[0], message.control[0], rcvReturn, sendReturn );
 
+	
 	} while( exitController != 1 );
 	
 

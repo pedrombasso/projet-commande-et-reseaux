@@ -106,8 +106,10 @@ int main(int argc,char* argv[])
     unsigned int longaddr;
 
 
+   
+
     // Connection to the VREP_Server
-    int clientID=simxStart((simxChar*)"162.38.40.133",portVREP,true,true,timeOutInMs,commThreadCycleInMs);
+    int clientID=simxStart((simxChar*)"162.38.40.126",portVREP,true,true,timeOutInMs,commThreadCycleInMs);
 
     // Server creation
 	communicatorClient=socket(PF_INET,SOCK_DGRAM,IPPROTO_UDP);
@@ -159,14 +161,17 @@ int main(int argc,char* argv[])
        
        int offsetTime=simxGetLastCmdTime(clientID)/1000;
 
-
+        int rcvReturn = 0;
 
        while (t < tfinal)
        {
            
             // receiving the data from communicator client
-            int resultr=recvfrom( communicatorClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr );
-            printf("\n Received from Controller Client : \n  label=%f position=%f control=%f rr=%d",message.label,message.position[5], message.control, resultr );
+            printf("before == %d \n", rcvReturn);
+            rcvReturn=recvfrom(communicatorClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr);
+            printf("after == %d \n", rcvReturn);
+
+        //    printf("\n Received from Controller Client : \n  label=%f position=%f control=%f rr=%d",message.label,message.position[5], message.control, rcvReturn );
 
 
            printf("Current time: %6.4f\n", t);
@@ -179,7 +184,7 @@ int main(int argc,char* argv[])
            //q[1]=-q1m*sin(2*w*t);
            //q[2]=q2m*sin(4*w*t);
 
-            if( resultr != 0 )
+            if( rcvReturn != 0   )
             {
                 //q = message.position;
                 memcpy( q, message.position, sizeof( q ) );
@@ -188,6 +193,14 @@ int main(int argc,char* argv[])
 
 
            SetJointPos(clientID, q);
+
+            // // Loopback send to the Comunicator
+            // if( rcvReturn != 0 )
+            // {
+            //     int sendReturn = sendto( communicatorClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockServer));
+            // }
+
+            
            //simxSynchronousTrigger(clientID);
            t+=dt;
            usleep(dt*1000*1000);

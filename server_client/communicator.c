@@ -6,9 +6,9 @@ int main (int argc, char *arg[])
 	struct mesg message;
 	int result, nsend;
 	struct sockaddr_in sockServer, sockClient;
-	int controllerClient, commandeServer, err, nConnect, longaddr;
-	int n , i, results, resultr ;
-	long int  Te;
+	int controllerClient, commandeServer, err, nConnect;
+	unsigned int longaddr;
+	int n , i;
 	double  Un,  Sn,  Snp , K;
 	double tau, dt, A, B;
 	int Rt;  
@@ -44,25 +44,35 @@ int main (int argc, char *arg[])
 	message.position[0]=0.0;
 	message.control[0]=0.0;
 
-	Te=200000; // Te=100ms
+	long int Te = 200000; // Te=100ms
+	long int Tdelay = 1000000; // 1 seg
 
-	results=ERROR;
-	resultr=ERROR;
+	int rcvReturn = ERROR;
+	int sendReturn = ERROR;
 
 	do
 	{
 
-		usleep(Te); 
+		usleep(Te); // why? dunno but keep it here
 
-		resultr=recvfrom( controllerClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr );
+		int rcvReturn=recvfrom( controllerClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr );
 
-		printf("\n Received from Controller Client : \n  label=%f position=%f control=%f rr=%d rs=%d ",message.label,message.position[0], message.control[0], resultr, results );
+		printf("\n Received from Controller Client : \n  label=%f position=%f control=%f rr=%d rs=%d ",message.label,message.position[0], message.control[0], rcvReturn, sendReturn );
 
-		// delay simulado
+		// simulated delay, each 10 seconds we have to change it's value, from 20ms to 1s
+		usleep( Tdelay );
 
-		results=sendto( commandeServer,&message,sizeof(message),0,(struct sockaddr*)&sockClient,sizeof(sockClient));
+		sendReturn=sendto( commandeServer,&message,sizeof(message),0,(struct sockaddr*)&sockClient,sizeof(sockClient));
 		// results=sendto(controllerClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockAddr));
+		
+		// Loopback receive from the comande
+		rcvReturn=recvfrom( commandeServer,&message,sizeof(message), 0,(struct sockaddr*)&sockClient,&longaddr );
 
+		// Loopback send to the Controller
+		if( rcvReturn != 0 )
+		{
+			sendReturn=sendto( controllerClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockServer));
+		}
 
 	} while(message.label<100.0);
 
