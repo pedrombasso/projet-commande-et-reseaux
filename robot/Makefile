@@ -10,7 +10,7 @@ CC=gcc -O3 $(USER_DEFINES)
 # required C files in remoteApi folder:
 #     extApi.c, extApiPlatform.c 
 #
-PATH_VREP=/home/VREP
+PATH_VREP=/Users/edulorandi/Documents/AutomEtRess/VREP
 INCLUDE1 = $(PATH_VREP)/programming/include
 INCLUDE2 = $(PATH_VREP)/programming/remoteApi
 INCLUDE = -I$(INCLUDE1) -I$(INCLUDE2)
