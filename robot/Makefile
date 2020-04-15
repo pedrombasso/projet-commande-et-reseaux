@@ -10,7 +10,7 @@ CC=gcc -O3 $(USER_DEFINES)
 # required C files in remoteApi folder:
 #     extApi.c, extApiPlatform.c 
 #
-PATH_VREP=/home/VREP
+PATH_VREP = ../VREPincludes
 INCLUDE1 = $(PATH_VREP)/programming/include
 INCLUDE2 = $(PATH_VREP)/programming/remoteApi
 INCLUDE = -I$(INCLUDE1) -I$(INCLUDE2)
@@ -23,7 +23,7 @@ EXE = control
 OBJS = extApi.o extApiPlatform.o main.o
 
 all: 		$(OBJS)
-			g++ $? -o $(EXE) -lpthread -lrt -LextApi.o -LextApiPlatform.o 
+			g++ $? -o $(EXE) -lpthread
 
 
 extApi.o: 	$(INCLUDE2)/extApi.c
@@ -36,6 +36,5 @@ main.o: 	main.cpp
 			$(CC) -c $(INCLUDE) main.cpp
 			
 
-			
 clean:
 			rm *.o $(EXE)
