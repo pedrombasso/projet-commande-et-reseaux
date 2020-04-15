@@ -50,3 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+
+#Custom stuff
+server_client/client
+server_client/server
+robot/control
