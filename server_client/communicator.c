@@ -42,7 +42,7 @@ int main (int argc, char *arg[])
 	
 
 	long int Te = 200000; // Te=100ms
-	long int Tdelay = 1000000; // 1 seg
+	// long int Tdelay = 1000000; // 1 seg
 
 	int rcvReturn = ERROR;
 	int sendReturn = ERROR;
@@ -53,10 +53,11 @@ int main (int argc, char *arg[])
 		rcvReturn = recvfrom( controllerClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr );
 		if( rcvReturn != ERROR )
 		{
-			printf("\n Received from Controller : \n  label=%d position=%f control=%f rr=%d rs=%d ",message.id,message.position[0], message.control[0], rcvReturn, sendReturn );
+			
+			printMessage(message);
 			
 			// simulated delay, each 10 seconds we have to change it's value, from 20ms to 1s
-			usleep( Tdelay );
+			usleep( rand() % (MAXTIME + 1 - MINTIME) + MINTIME );
 
 			sendReturn=sendto( commandeServer,&message,sizeof(message),0,(struct sockaddr*)&sockClient,sizeof(sockClient));
 			// results=sendto(controllerClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockAddr));
@@ -68,7 +69,7 @@ int main (int argc, char *arg[])
 		rcvReturn=recvfrom( commandeServer,&message,sizeof(message), 0,(struct sockaddr*)&sockClient,&longaddr );
 		if( rcvReturn != ERROR )
 		{
-			usleep( Tdelay );
+			usleep( rand() % (MAXTIME + 1 - MINTIME) + MINTIME );
 			sendReturn=sendto( controllerClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockServer));
 		}
 

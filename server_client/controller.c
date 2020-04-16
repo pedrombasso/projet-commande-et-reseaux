@@ -70,25 +70,27 @@ int main (int argc, char *arg[])
 		message.id++;
 		printf("Sending position %d to Server...\n", userInput );
 
-		struct timespec timeStart;
+		struct timespec timeStart, timeEnd;
 		clock_gettime( CLOCK_REALTIME, &timeStart );
+		int timeCommunication = 0;
 
 		sendReturn=sendto(communicatorServer,&message,sizeof(message),0,(struct sockaddr*)&sockClient,sizeof(sockClient));
 
 		// blocking recevie from Comunicator
 		do
 		{
-			rcvReturn=recvfrom( communicatorServer,&message,sizeof(message), 0,(struct sockaddr*)&sockClient,&longaddr );
-		} while ( rcvReturn == ERROR );
+			
+			rcvReturn=recvfrom( communicatorServer,&message,sizeof(message), 0,(struct sockaddr*)&sockClient,&longaddr );			
+			clock_gettime( CLOCK_REALTIME, &timeEnd );	
+			timeCommunication = timeDiffMs( timeEnd, timeStart );	
+
+
+		} while ( rcvReturn == ERROR && timeCommunication < TIMEOUT);
 		
 
-		printf("\n Received from Server: \n  id=%d position=%f control=%f rr=%d rs=%d\n ",message.id,message.position[0], message.control[0], rcvReturn, sendReturn );
-		
-		struct timespec timeEnd;
-		clock_gettime( CLOCK_REALTIME, &timeEnd );
-	
-		printf("It took %d ns for this shit \n", timeDiffMs( timeEnd, timeStart ));
-	
+		printMessage(message);			
+		printf("\nTotal time: %d \n", timeCommunication);
+			
 	} while( exitController != 1 );
 	
 
