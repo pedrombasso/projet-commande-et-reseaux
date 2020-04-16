@@ -18,6 +18,7 @@
 #define TIMEOUT 2000
 #define MINTIME 20000 //20ms
 #define MAXTIME 1000000 // 1s
+#define PI 3.1412
 
 struct mesg
 {

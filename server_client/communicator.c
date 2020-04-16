@@ -13,6 +13,7 @@ int main (int argc, char *arg[])
 	double tau, dt, A, B;
 	int Rt;  
 	
+	
 	// ###### Server part
 
 	controllerClient=socket(PF_INET,SOCK_DGRAM,IPPROTO_UDP);

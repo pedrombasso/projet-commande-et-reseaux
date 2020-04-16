@@ -43,7 +43,7 @@ int main (int argc, char *arg[])
 
 	do
 	{
-		printf("Select robot position:\n\t0 - Initial Position\n\t1 - Position 1\n");
+		printf("Select robot position:\n\t0 - Initial Position\n\t1 - Position 1\n\t2 - Position 2\n\t3 - Position 3\n");
 		scanf("%d", &userInput);
 
 		switch( userInput )
@@ -59,6 +59,31 @@ int main (int argc, char *arg[])
 				message.position[3] = 0.1;
 				message.position[4] = 0.3;
 				message.position[5] = 1;
+				break;
+
+			case 2:
+				// message.position[0] = -1.2*PI;
+				// message.position[1] = -0.5*PI;
+				// message.position[2] = 0.45*PI;
+				// message.position[3] = -0.30*PI;
+				// message.position[4] = 2.0*PI;
+				// message.position[5] = -1.5*PI;
+				message.position[0] = -0.5*PI;
+				message.position[1] = -0.25*PI;
+				message.position[2] = -0.5*PI;
+				message.position[3] = -0.0*PI;
+				message.position[4] = 1.0*PI;
+				message.position[5] = -1.5*PI;
+
+				break;
+
+			case 3:
+				message.position[0] = PI;
+				message.position[1] = 0.25*PI;
+				message.position[2] = 0.25*PI;
+				message.position[3] = 0*PI;
+				message.position[4] = -0.25*PI;
+				message.position[5] = PI;
 				break;
 
 			default:
