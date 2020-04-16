@@ -56,3 +56,5 @@ dkms.conf
 server_client/client
 server_client/server
 robot/control
+server_client/clientController
+server_client/serverCommunicator
