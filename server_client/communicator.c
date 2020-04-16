@@ -47,6 +47,8 @@ int main (int argc, char *arg[])
 	int rcvReturn = ERROR;
 	int sendReturn = ERROR;
 
+	printf("######### Starting Communicator Server ##########\n\n\n");
+
 	do
 	{
 
@@ -54,11 +56,14 @@ int main (int argc, char *arg[])
 		if( rcvReturn != ERROR )
 		{
 			
+			printf("RCVD from CLIENT\n");
 			printMessage(message);
 			
 			// simulated delay, each 10 seconds we have to change it's value, from 20ms to 1s
-			usleep( rand() % (MAXTIME + 1 - MINTIME) + MINTIME );
+			int randomDelay = rand() % (MAXTIME + 1 - MINTIME) + MINTIME;
+			usleep( randomDelay );
 
+			printf("Sending with delay of %d ms\n", randomDelay/1000 );
 			sendReturn=sendto( commandeServer,&message,sizeof(message),0,(struct sockaddr*)&sockClient,sizeof(sockClient));
 			// results=sendto(controllerClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockAddr));
 
@@ -69,11 +74,21 @@ int main (int argc, char *arg[])
 		rcvReturn=recvfrom( commandeServer,&message,sizeof(message), 0,(struct sockaddr*)&sockClient,&longaddr );
 		if( rcvReturn != ERROR )
 		{
-			usleep( rand() % (MAXTIME + 1 - MINTIME) + MINTIME );
+			printf("RCVD from VREP\n");
+			printMessage(message);
+			
+			// simulated delay, each 10 seconds we have to change it's value, from 20ms to 1s
+			int randomDelay = rand() % (MAXTIME + 1 - MINTIME) + MINTIME;
+			usleep( randomDelay );
+			
+			printf("Sending with delay of %d ms\n", randomDelay/1000 );
 			sendReturn=sendto( controllerClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockServer));
+
+			printf("################################################\n\n\n");
 		}
 
-	} while(message.id<100);
+
+	} while(1);
 
 
 	close(controllerClient);

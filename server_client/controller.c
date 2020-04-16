@@ -60,7 +60,7 @@ int main (int argc, char *arg[])
 				message.position[4] = 0.3;
 				message.position[5] = 1;
 				break;
-			
+
 			default:
 				exitController = 1;
 				break;
@@ -68,7 +68,9 @@ int main (int argc, char *arg[])
 		}
 
 		message.id++;
-		printf("Sending position %d to Server...\n", userInput );
+		printf("\nSending position %d to Server\n", userInput );
+		printMessage( message );
+		printf("Waiting for response...\n\n\n");
 
 		struct timespec timeStart, timeEnd;
 		clock_gettime( CLOCK_REALTIME, &timeStart );
@@ -85,11 +87,21 @@ int main (int argc, char *arg[])
 			timeCommunication = timeDiffMs( timeEnd, timeStart );	
 
 
-		} while ( rcvReturn == ERROR && timeCommunication < TIMEOUT);
+		} while ( rcvReturn == ERROR );
 		
+		if( timeCommunication >= TIMEOUT )
+		{
+			printf("Connection Timeout\n\n\n");
+		}
+		else
+		{
+			printf("Successfully received message\n");
+			printMessage(message);			
+			printf("\nTotal time: %d ms\n\n", timeCommunication);
+		}
 
-		printMessage(message);			
-		printf("\nTotal time: %d \n", timeCommunication);
+		printf("#####################################################\n\n");
+		
 			
 	} while( exitController != 1 );
 	

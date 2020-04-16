@@ -220,6 +220,7 @@ int main(int argc,char* argv[])
                 memcpy( q, message.position, sizeof( q ) );
                 SetJointPos( clientID, q);
 
+                //usleep( 100000 );
 
                 GetJointPos( clientID, q);
                 memcpy( message.position, q, sizeof( q ) );

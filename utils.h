@@ -15,7 +15,7 @@
 #include <time.h>
 
 #define ERROR -1
-#define TIMEOUT 1000
+#define TIMEOUT 2000
 #define MINTIME 20000 //20ms
 #define MAXTIME 1000000 // 1s
 
@@ -36,7 +36,7 @@ int timeDiffMs( struct timespec end, struct timespec begin )
 
 void printMessage (struct mesg message){
 
-	printf("\t ID: %d\n\t - Position[0] = %f\n\t - Position[1] = %f\n\t - Position[2] = %f\n\t - Position[3] = %f\n\t - Position[4] = %f\n\t - Position[5] = %f\n\t Actual Control = %f",
-					message.id,message.position[0],message.position[1],message.position[2],message.position[3],message.position[4],message.position[5], message.control[0]);
+	printf("## Message\t ID: %d\t\tActual Control:%f\n\t - Position[0] = %f\n\t - Position[1] = %f\n\t - Position[2] = %f\n\t - Position[3] = %f\n\t - Position[4] = %f\n\t - Position[5] = %f\n",
+					message.id,  message.control[0], message.position[0],message.position[1],message.position[2],message.position[3],message.position[4],message.position[5]);
 }
  
