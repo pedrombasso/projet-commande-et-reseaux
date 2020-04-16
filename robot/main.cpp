@@ -88,6 +88,42 @@ int SetJointPos(int clientID,  float *q)
         return 0;
 }
 
+int GetJointPos(int clientID,  float *q)
+{
+    simxChar objectName[100];
+    char str[10];
+    simxInt handle, error;
+    int handles[6], all_ok=1;
+
+    // Get the table of handles
+    for (int i=0; i < 6; i++) {
+        strcpy(objectName, "joint");
+        sprintf(str, "%d", i+1);
+        strcat(objectName,str);
+        error=simxGetObjectHandle(clientID, objectName, &handle, simx_opmode_oneshot_wait);
+        if (error == simx_return_ok)
+            handles[i]=handle;
+        else {
+            printf("Error in Object Handle - joint number %d\n", i);
+            all_ok=0;
+        }
+    }
+    if (all_ok) {
+        //Pause the communication thread
+        simxPauseCommunication(clientID, 1);
+        // Send the joint target positions
+		float qv;
+        for (int i=0; i < 6; i++) {
+			simxGetJointPosition(clientID, handles[i], &qv, simx_opmode_oneshot);
+			q[i] = qv;
+		}
+        // Resume the communication thread to update all values at the same time
+        simxPauseCommunication(clientID, 0);
+        return 1;
+    }
+    else
+        return 0;
+}
 
 int main(int argc,char* argv[])
 {
@@ -109,7 +145,7 @@ int main(int argc,char* argv[])
    
 
     // Connection to the VREP_Server
-    int clientID=simxStart((simxChar*)"192.168.43.151",portVREP,true,true,timeOutInMs,commThreadCycleInMs);
+    int clientID=simxStart((simxChar*)"127.0.0.1",portVREP,true,true,timeOutInMs,commThreadCycleInMs);
 
     // Server creation
 	communicatorClient=socket(PF_INET,SOCK_DGRAM,IPPROTO_UDP);
@@ -145,8 +181,6 @@ int main(int argc,char* argv[])
        simxSynchronous(clientID,true);       // Enable the synchronous mode (Blocking function call)
        simxStartSimulation(clientID, simx_opmode_oneshot);
 
-       float t=0.0;
-       float tfinal=20;
        float dt=0.05;
        
        // here we should open a server to receive the data from the Communicator's client side
@@ -163,18 +197,14 @@ int main(int argc,char* argv[])
 
         int rcvReturn = 0;
 
-       while (t < tfinal)
+       while ( 1 )
        {
            
             // receiving the data from communicator client
-            printf("before == %d \n", rcvReturn);
             rcvReturn=recvfrom(communicatorClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr);
-            printf("after == %d \n", rcvReturn);
 
         //    printf("\n Received from Controller Client : \n  label=%f position=%f control=%f rr=%d",message.label,message.position[5], message.control, rcvReturn );
 
-
-           printf("Current time: %6.4f\n", t);
            //GetJointPos(clientId,qr);
            //q[0] = 0;//q0m*sin(w*t);  ##### 
            //if (t>2) q[0]=0.4;
@@ -188,7 +218,13 @@ int main(int argc,char* argv[])
             {
                 //q = message.position;
                 memcpy( q, message.position, sizeof( q ) );
-                SetJointPos(clientID, q);
+                SetJointPos( clientID, q);
+
+
+                GetJointPos( clientID, q);
+                memcpy( message.position, q, sizeof( q ) );
+
+                
                 int sendReturn = sendto( communicatorClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockServer));
 
             }
@@ -196,7 +232,6 @@ int main(int argc,char* argv[])
 
             
            //simxSynchronousTrigger(clientID);
-           t+=dt;
            usleep(dt*1000*1000);
         }
 
