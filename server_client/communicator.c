@@ -40,9 +40,6 @@ int main (int argc, char *arg[])
 	
 	// ### end client part
 	
-	message.label=0.0;
-	message.position[0]=0.0;
-	message.control[0]=0.0;
 
 	long int Te = 200000; // Te=100ms
 	long int Tdelay = 1000000; // 1 seg
@@ -53,28 +50,29 @@ int main (int argc, char *arg[])
 	do
 	{
 
-		usleep(Te); // why? dunno but keep it here
+		rcvReturn = recvfrom( controllerClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr );
+		if( rcvReturn != ERROR )
+		{
+			printf("\n Received from Controller : \n  label=%d position=%f control=%f rr=%d rs=%d ",message.id,message.position[0], message.control[0], rcvReturn, sendReturn );
+			
+			// simulated delay, each 10 seconds we have to change it's value, from 20ms to 1s
+			usleep( Tdelay );
 
-		int rcvReturn=recvfrom( controllerClient,&message,sizeof(message), 0,(struct sockaddr*)&sockServer,&longaddr );
+			sendReturn=sendto( commandeServer,&message,sizeof(message),0,(struct sockaddr*)&sockClient,sizeof(sockClient));
+			// results=sendto(controllerClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockAddr));
 
-		printf("\n Received from Controller Client : \n  label=%f position=%f control=%f rr=%d rs=%d ",message.label,message.position[0], message.control[0], rcvReturn, sendReturn );
+		}
 
-		// simulated delay, each 10 seconds we have to change it's value, from 20ms to 1s
-		usleep( Tdelay );
 
-		sendReturn=sendto( commandeServer,&message,sizeof(message),0,(struct sockaddr*)&sockClient,sizeof(sockClient));
-		// results=sendto(controllerClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockAddr));
-		
 		// Loopback receive from the comande
 		rcvReturn=recvfrom( commandeServer,&message,sizeof(message), 0,(struct sockaddr*)&sockClient,&longaddr );
-
-		// Loopback send to the Controller
-		if( rcvReturn != 0 )
+		if( rcvReturn != ERROR )
 		{
+			usleep( Tdelay );
 			sendReturn=sendto( controllerClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockServer));
 		}
 
-	} while(message.label<100.0);
+	} while(message.id<100);
 
 
 	close(controllerClient);

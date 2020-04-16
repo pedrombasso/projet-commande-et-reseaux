@@ -184,21 +184,15 @@ int main(int argc,char* argv[])
            //q[1]=-q1m*sin(2*w*t);
            //q[2]=q2m*sin(4*w*t);
 
-            if( rcvReturn != 0   )
+            if( rcvReturn > 0   )
             {
                 //q = message.position;
                 memcpy( q, message.position, sizeof( q ) );
+                SetJointPos(clientID, q);
+                int sendReturn = sendto( communicatorClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockServer));
+
             }
 
-
-
-           SetJointPos(clientID, q);
-
-            // // Loopback send to the Comunicator
-            // if( rcvReturn != 0 )
-            // {
-            //     int sendReturn = sendto( communicatorClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockServer));
-            // }
 
             
            //simxSynchronousTrigger(clientID);

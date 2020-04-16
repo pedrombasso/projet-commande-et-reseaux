@@ -20,7 +20,7 @@ int main (int argc, char *arg[])
 
 	if( argc < 2 )
 	{
-		printf("Working with standard address %s: ", STD_ADDR);
+		printf("Starting with standard IP \n\n");
 		sockClient.sin_addr.s_addr=inet_addr(STD_ADDR);
 	}
 	else
@@ -28,11 +28,11 @@ int main (int argc, char *arg[])
 		sockClient.sin_addr.s_addr=inet_addr(arg[1]);
 	}
 
-	//fcntl(communicatorServer,F_SETFL,fcntl(communicatorServer,F_GETFL) | O_NONBLOCK); 
+	fcntl(communicatorServer,F_SETFL,fcntl(communicatorServer,F_GETFL) | O_NONBLOCK); 
+	printf("######## Successfull Conncetion with address : %s #########\n\n", STD_ADDR);
 
 	
-	
-	message.label=0.0;
+	message.id=0;
 	memset( message.position, 0, sizeof(float)*6);
 	message.control[0]=0;
 
@@ -62,28 +62,37 @@ int main (int argc, char *arg[])
 				break;
 			
 			default:
-				printf("BYE BYE\n");
 				exitController = 1;
 				break;
 
 		}
-		
-		// Te=200000; // Te=100ms
-		// usleep(Te);
 
-		message.label++;
+		message.id++;
+		printf("Sending position %d to Server...\n", userInput );
+
+		struct timespec timeStart;
+		clock_gettime( CLOCK_REALTIME, &timeStart );
+
 		sendReturn=sendto(communicatorServer,&message,sizeof(message),0,(struct sockaddr*)&sockClient,sizeof(sockClient));
-		//resultr=recvfrom(communicatorServer,&message,sizeof(message), 0,(struct sockaddr*)&sockClient,&addr);
 
-		// Loopback recevie from COmunicator
-		rcvReturn=recvfrom( communicatorServer,&message,sizeof(message), 0,(struct sockaddr*)&sockClient,&longaddr );
-		printf("\n client : \n  label=%f position=%f control=%f rr=%d rs=%d ",message.label,message.position[0], message.control[0], rcvReturn, sendReturn );
+		// blocking recevie from Comunicator
+		do
+		{
+			rcvReturn=recvfrom( communicatorServer,&message,sizeof(message), 0,(struct sockaddr*)&sockClient,&longaddr );
+		} while ( rcvReturn == ERROR );
+		
 
+		printf("\n Received from Server: \n  id=%d position=%f control=%f rr=%d rs=%d\n ",message.id,message.position[0], message.control[0], rcvReturn, sendReturn );
+		
+		struct timespec timeEnd;
+		clock_gettime( CLOCK_REALTIME, &timeEnd );
+	
+		printf("It took %dns for this shit \n", timeDiffMs( timeEnd, timeStart ));
 	
 	} while( exitController != 1 );
 	
 
-
+	printf("Closing connection\n");
 	close(communicatorServer);
 
 	return 0;
