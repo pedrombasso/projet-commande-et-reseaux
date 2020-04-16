@@ -26,6 +26,7 @@ Le *./clientController* ira demander pour choissir 4 positions differentes:
 C'est possible de verifier le fonctionement des outres partes en observant les prints sur `./control` et `./serverCommunicator`
 
 
+## Some notes
 - open VM:  C:/VBox/linuxmea, login: td1  pass: td1
 
 - open VREP: at /home/VREP, type ./vrep.sh
