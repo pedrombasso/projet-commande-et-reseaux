@@ -87,7 +87,7 @@ int main (int argc, char *arg[])
 		struct timespec timeEnd;
 		clock_gettime( CLOCK_REALTIME, &timeEnd );
 	
-		printf("It took %dns for this shit \n", timeDiffMs( timeEnd, timeStart ));
+		printf("It took %d ns for this shit \n", timeDiffMs( timeEnd, timeStart ));
 	
 	} while( exitController != 1 );
 	

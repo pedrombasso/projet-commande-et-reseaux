@@ -109,7 +109,7 @@ int main(int argc,char* argv[])
    
 
     // Connection to the VREP_Server
-    int clientID=simxStart((simxChar*)"127.0.0.1",portVREP,true,true,timeOutInMs,commThreadCycleInMs);
+    int clientID=simxStart((simxChar*)"192.168.43.151",portVREP,true,true,timeOutInMs,commThreadCycleInMs);
 
     // Server creation
 	communicatorClient=socket(PF_INET,SOCK_DGRAM,IPPROTO_UDP);
