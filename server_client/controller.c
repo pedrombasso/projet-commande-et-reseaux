@@ -53,22 +53,16 @@ int main (int argc, char *arg[])
 				break;
 
 			case 1:
-				message.position[0] = -0.5;
-				message.position[1] = 0.5;
-				message.position[2] = 0.25;
-				message.position[3] = 0.1;
-				message.position[4] = 0.3;
-				message.position[5] = 1;
+				message.position[0] = -1.0*PI;
+				message.position[1] = 0.0*PI;
+				message.position[2] = -0.25*PI;
+				message.position[3] = 0.0*PI;
+				message.position[4] = 0.0*PI;
+				message.position[5] = 0.0*PI;
 				break;
 
 			case 2:
-				// message.position[0] = -1.2*PI;
-				// message.position[1] = -0.5*PI;
-				// message.position[2] = 0.45*PI;
-				// message.position[3] = -0.30*PI;
-				// message.position[4] = 2.0*PI;
-				// message.position[5] = -1.5*PI;
-				message.position[0] = -0.5*PI;
+				message.position[0] = 1.0*PI;
 				message.position[1] = -0.25*PI;
 				message.position[2] = -0.5*PI;
 				message.position[3] = -0.0*PI;
@@ -78,7 +72,7 @@ int main (int argc, char *arg[])
 				break;
 
 			case 3:
-				message.position[0] = PI;
+				message.position[0] = 0*PI;
 				message.position[1] = 0.25*PI;
 				message.position[2] = 0.25*PI;
 				message.position[3] = 0*PI;
