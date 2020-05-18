@@ -1,2 +1,2 @@
-gcc communicator.c  -o server
-gcc controller.c  -o client
+gcc communicator.c  -o serverCommunicator
+gcc controller.c  -o clientControle

@@ -88,6 +88,26 @@ int SetJointPos(int clientID,  float *q)
         return 0;
 }
 
+
+
+int SetJointVit(int clientID,  float *q)
+{
+
+    if (all_ok) {
+        //Pause the communication thread
+        //simxPauseCommunication(clientID, 1);
+        // Send the joint target positions
+        for (int i=0; i < 6; i++)
+            simxSetJointTargetVelocity(clientID, handles[i], q[i], simx_opmode_oneshot);
+        // Resume the communication thread to update all values at the same time
+        //simxPauseCommunication(clientID, 0);
+        return 1;
+    }
+    else
+        return 0;
+}
+
+
 int GetJointPos(int clientID,  float *q)
 {
     simxChar objectName[100];
@@ -168,7 +188,7 @@ int main(int argc,char* argv[])
 //    for (int i=0; i < 6; i++) q[i]=0.0;
 
     float q[6];
-    float qr[6];
+    float qVitesse[6];
     GetHandles(clientID);
     
     for (int i=0; i < 6;i++)
@@ -217,13 +237,14 @@ int main(int argc,char* argv[])
             if( rcvReturn > 0   )
             {
                 //q = message.position;
-                memcpy( q, message.position, sizeof( q ) );
-                SetJointPos( clientID, q);
+                printMessage(message);
+                memcpy( q, message.control, sizeof( q ) );
+                SetJointVit( clientID, q);
 
                 //usleep( 100000 );
 
                 GetJointPos( clientID, q);
-                memcpy( message.position, q, sizeof( q ) );
+                memcpy( message.control, q, sizeof( q ) );
 
                 
                 int sendReturn = sendto( communicatorClient,&message,sizeof(message),0,(struct sockaddr*)&sockServer,sizeof(sockServer));

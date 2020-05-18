@@ -13,6 +13,7 @@
 
 // our includes
 #include <time.h>
+#include <math.h>
 
 #define ERROR -1
 #define TIMEOUT 2000
@@ -23,8 +24,7 @@
 struct mesg
 {
 	int id;
-	float position[6];
-	float control[1];
+	float control[6];
 };
 
 int timeDiffMs( struct timespec end, struct timespec begin )
@@ -37,7 +37,7 @@ int timeDiffMs( struct timespec end, struct timespec begin )
 
 void printMessage (struct mesg message){
 
-	printf("## Message\t ID: %d\t\tActual Control:%f\n\t - Position[0] = %f\n\t - Position[1] = %f\n\t - Position[2] = %f\n\t - Position[3] = %f\n\t - Position[4] = %f\n\t - Position[5] = %f\n",
-					message.id,  message.control[0], message.position[0],message.position[1],message.position[2],message.position[3],message.position[4],message.position[5]);
+	printf("## Message\t ID: %d\n\t - Controle[0] = %f\n\t - Controle[1] = %f\n\t - Controle[2] = %f\n\t - Controle[3] = %f\n\t - Controle[4] = %f\n\t - Controle[5] = %f\n",
+					message.id, message.control[0],message.control[1],message.control[2],message.control[3],message.control[4],message.control[5]);
 }
  

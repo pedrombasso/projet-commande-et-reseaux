@@ -50,6 +50,9 @@ int main (int argc, char *arg[])
 
 	printf("######### Starting Communicator Server ##########\n\n\n");
 
+	srand(time(0));
+	int randomDelay = rand() % (MAXTIME + 1 - MINTIME) + MINTIME;
+
 	do
 	{
 
@@ -61,7 +64,7 @@ int main (int argc, char *arg[])
 			printMessage(message);
 			
 			// simulated delay, each 10 seconds we have to change it's value, from 20ms to 1s
-			int randomDelay = rand() % (MAXTIME + 1 - MINTIME) + MINTIME;
+			// int randomDelay = rand() % (MAXTIME + 1 - MINTIME) + MINTIME;
 			usleep( randomDelay );
 
 			printf("Sending with delay of %d ms\n", randomDelay/1000 );
@@ -79,7 +82,7 @@ int main (int argc, char *arg[])
 			printMessage(message);
 			
 			// simulated delay, each 10 seconds we have to change it's value, from 20ms to 1s
-			int randomDelay = rand() % (MAXTIME + 1 - MINTIME) + MINTIME;
+			// int randomDelay = rand() % (MAXTIME + 1 - MINTIME) + MINTIME;
 			usleep( randomDelay );
 			
 			printf("Sending with delay of %d ms\n", randomDelay/1000 );
